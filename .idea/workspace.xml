@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7487d3b-1a91-47fd-b7f1-443ad3ddf6c6" name="Changes" comment="initial commit, first update">
+    <list default="true" id="b7487d3b-1a91-47fd-b7f1-443ad3ddf6c6" name="Changes" comment="second update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commandHandler.js" beforeDir="false" afterPath="$PROJECT_DIR$/commandHandler.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reminderSystem.js" beforeDir="false" afterPath="$PROJECT_DIR$/reminderSystem.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stickerHandler.js" beforeDir="false" afterPath="$PROJECT_DIR$/stickerHandler.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/taskManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/taskManager.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -88,7 +89,7 @@
       <workItem from="1740372609043" duration="1605000" />
       <workItem from="1740375000227" duration="152000" />
       <workItem from="1740375160018" duration="1927000" />
-      <workItem from="1740377159552" duration="17790000" />
+      <workItem from="1740377159552" duration="21044000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit, first update">
       <option name="closed" value="true" />
@@ -98,7 +99,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740398557239</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="second update">
+      <option name="closed" value="true" />
+      <created>1740400782439</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1740400782439</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -117,6 +126,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial commit, first update" />
-    <option name="LAST_COMMIT_MESSAGE" value="initial commit, first update" />
+    <MESSAGE value="second update" />
+    <option name="LAST_COMMIT_MESSAGE" value="second update" />
   </component>
 </project>

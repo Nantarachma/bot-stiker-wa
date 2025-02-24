@@ -1,8 +1,33 @@
+const fs = require('fs');
 const moment = require('moment');
+const dataFilePath = './tasks.json';
 
 class TaskManager {
     constructor() {
         this.tasks = new Map();
+        this.loadTasks();
+    }
+
+    // Menyimpan data tugas ke file
+    saveTasks() {
+        const tasksArray = Array.from(this.tasks.values());
+        fs.writeFileSync(dataFilePath, JSON.stringify(tasksArray, null, 2));
+    }
+
+    // Memuat data tugas dari file
+    loadTasks() {
+        if (fs.existsSync(dataFilePath)) {
+            const tasksArray = JSON.parse(fs.readFileSync(dataFilePath));
+            tasksArray.forEach(task => {
+                task.deadline = moment(task.deadline);
+                task.createdAt = moment(task.createdAt);
+                task.submissions = task.submissions.map(submission => ({
+                    ...submission,
+                    submittedAt: moment(submission.submittedAt)
+                }));
+                this.tasks.set(task.id, task);
+            });
+        }
     }
 
     // Menambah tugas baru
@@ -20,6 +45,7 @@ class TaskManager {
         };
 
         this.tasks.set(taskId, task);
+        this.saveTasks();
         return taskId;
     }
 
@@ -49,6 +75,7 @@ class TaskManager {
 
         task.status = status;
         this.tasks.set(taskId, task);
+        this.saveTasks();
         return true;
     }
 
@@ -64,6 +91,7 @@ class TaskManager {
         });
 
         this.tasks.set(taskId, task);
+        this.saveTasks();
         return true;
     }
 

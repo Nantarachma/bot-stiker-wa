@@ -3,6 +3,9 @@ const qrcode = require('qrcode-terminal');
 const moment = require('moment');
 const { clientConfig } = require('./config');
 const { handleCommand } = require('./commandHandler');
+const { stickerHandler } = require('./stickerHandler');
+const { reminderSystem } = require('./reminderSystem');
+const { taskManager } = require('./taskManager');
 const { logMessage } = require('./messageLogger');
 
 // Inisialisasi client
@@ -29,7 +32,6 @@ client.on('auth_failure', (err) => {
 });
 
 client.on('ready', () => {
-    console.clear();
     console.log('===============================');
     console.log('✅ Bot siap digunakan!');
     console.log(`📅 Login time: ${moment().format('YYYY-MM-DD HH:mm:ss')}`);
