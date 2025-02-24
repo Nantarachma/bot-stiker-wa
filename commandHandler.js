@@ -1,3 +1,7 @@
+const ReminderSystem = require('./reminderSystem');
+const TaskManager = require('./taskManager');
+const moment = require('moment');
+
 // Inisialisasi sistem
 const reminderSystem = new ReminderSystem();
 const taskManager = new TaskManager();
@@ -15,26 +19,26 @@ async function handleCommand(msg, command) {
             case '!help':
             case '!menu':
                 return await msg.reply(`
-📋 DAFTAR PERINTAH BOT:
-!bot = Cek bot aktif
-!jadwal = Lihat semua jadwal kuliah
-!jadwalhari = Lihat jadwal hari ini
-!stiker = Buat stiker dari gambar
-!rules = Lihat peraturan bot
-!about = Info tentang bot
-!time = Lihat waktu sekarang
+                📋 DAFTAR PERINTAH BOT:
+                !bot = Cek bot aktif
+                !jadwal = Lihat semua jadwal kuliah
+                !jadwalhari = Lihat jadwal hari ini
+                !stiker = Buat stiker dari gambar
+                !rules = Lihat peraturan bot
+                !about = Info tentang bot
+                !time = Lihat waktu sekarang
 
-[Fitur Reminder]
-!reminder on = Aktifkan pengingat jadwal
-!reminder off = Nonaktifkan pengingat jadwal
-!setreminder <menit> = Atur waktu pengingat
+                [Fitur Reminder]
+                !reminder on = Aktifkan pengingat jadwal
+                !reminder off = Nonaktifkan pengingat jadwal
+                !setreminder <menit> = Atur waktu pengingat
 
-[Fitur Tugas]
-!addtask = Tambah tugas baru
-!tasks = Lihat daftar tugas pending
-!overdue = Lihat tugas yang lewat deadline
-!submit <taskId> <link> = Submit tugas
-`);
+                [Fitur Tugas]
+                !addtask = Tambah tugas baru
+                !tasks = Lihat daftar tugas pending
+                !overdue = Lihat tugas yang lewat deadline
+                !submit <taskId> <link> = Submit tugas
+                `);
 
             case '!jadwal':
                 const allSchedules = Object.entries(schedules)

@@ -97,3 +97,5 @@ class ReminderSystem {
         });
     }
 }
+
+module.exports = ReminderSystem;

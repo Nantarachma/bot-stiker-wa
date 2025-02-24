@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7487d3b-1a91-47fd-b7f1-443ad3ddf6c6" name="Changes" comment="initial commit, first update" />
+    <list default="true" id="b7487d3b-1a91-47fd-b7f1-443ad3ddf6c6" name="Changes" comment="initial commit, first update">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commandHandler.js" beforeDir="false" afterPath="$PROJECT_DIR$/commandHandler.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reminderSystem.js" beforeDir="false" afterPath="$PROJECT_DIR$/reminderSystem.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/taskManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/taskManager.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,12 +31,12 @@
     &quot;assignee&quot;: &quot;Nantarachma&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/saaiit/bot-stiker-wa&quot;,
-    &quot;accountId&quot;: &quot;57ebe1af-ac72-495e-b9b2-d10863cb6dc4&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Nantarachma/bot-stiker-wa.git",
+    "accountId": "57ebe1af-ac72-495e-b9b2-d10863cb6dc4"
   }
-}</component>
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
   </component>
@@ -83,7 +88,7 @@
       <workItem from="1740372609043" duration="1605000" />
       <workItem from="1740375000227" duration="152000" />
       <workItem from="1740375160018" duration="1927000" />
-      <workItem from="1740377159552" duration="15951000" />
+      <workItem from="1740377159552" duration="17790000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit, first update">
       <option name="closed" value="true" />

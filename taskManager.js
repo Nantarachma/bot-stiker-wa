@@ -81,13 +81,15 @@ class TaskManager {
         const daysLeft = task.deadline.diff(moment(), 'days');
 
         return `
-📚 *${task.subject}*
-📝 ${task.description}
-⏰ Deadline: ${deadlineFormat}
-📌 Status: ${status}
-⌛ Sisa Waktu: ${daysLeft} hari
-🆔 Task ID: ${task.id}
-👤 Assigned by: ${task.assignedBy}
+        📚 *${task.subject}*
+        📝 ${task.description}
+        ⏰ Deadline: ${deadlineFormat}
+        📌 Status: ${status}
+        ⌛ Sisa Waktu: ${daysLeft} hari
+        🆔 Task ID: ${task.id}
+        👤 Assigned by: ${task.assignedBy}
         `.trim();
     }
 }
+
+module.exports = TaskManager;
