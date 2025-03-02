@@ -7,6 +7,13 @@ const schedules = {
     'Kamis': `👉Kamis 09.30-12.00 - Pemrograman Web\n👩👨Dosen = Bu Eka and Pak Nambi\n🏫Ruang = Gedung 2 R304`
 };
 
+const commandSchedules = {
+    'Senin': `09.30-12.00\n13.00-15.30\n15.30-18.00`,
+    'Selasa': `07.00-08.40\n13.00-15.30`,
+    'Rabu': `13.00-15.30\n15.30-18.00`,
+    'Kamis': `09.30-12.00`
+};
+
 const clientConfig = {
     authStrategy: new LocalAuth(),
     puppeteer: {
@@ -27,5 +34,6 @@ const clientConfig = {
 
 module.exports = {
     schedules,
+    commandSchedules,
     clientConfig
 };

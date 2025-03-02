@@ -12,28 +12,46 @@ const { schedules } = require('./config');
 
 async function handleCommand(msg, command) {
     try {
-        switch(command) {
+        const [mainCommand, ...args] = command.split(' ');
+
+        switch(mainCommand) {
             case '!bot':
                 return await msg.reply(`👋 Hello! BOT AKTIF\nWaktu: ${getCurrentTime()}`);
 
             case '!cmd':
             case '!help':
             case '!menu':
-                return await msg.reply
-(`📋 DAFTAR PERINTAH BOT:
-!bot = Cek bot aktif
-!jadwal = Lihat semua jadwal kuliah
-!jadwalhari = Lihat jadwal hari ini
-!stiker = Buat stiker dari gambar
-!rules = Lihat peraturan bot
-!about = Info tentang bot
-!time = Lihat waktu sekarang`);
+                const commands = [
+                    '!bot = Cek bot aktif',
+                    '!jadwal = Lihat semua jadwal kuliah',
+                    '!jadwalhari = Lihat jadwal hari ini',
+                    '!jadwalhari<bebas> = Lihat jadwal hari tertentu',
+                    '!stiker = Buat stiker dari gambar atau teks'
+                ].join('\n');
+                return await msg.reply(`📋 DAFTAR PERINTAH BOT:\n${commands}`);
 
             case '!jadwal':
                 const allSchedules = Object.entries(schedules)
                     .map(([day, schedule]) => `=== ${day} ===\n${schedule}`)
                     .join('\n\n');
                 return await msg.reply(`✨--JADWAL MATKUL--✨\n\n${allSchedules}`);
+
+            case '!kelaskapan':
+                const timeUntilNextClass = reminderSystem.getTimeUntilNextClass();
+                if (timeUntilNextClass === null) {
+                    return await msg.reply('Tidak ada kelas berikutnya yang terjadwal.');
+                } else {
+                    const { days, hours, minutes } = timeUntilNextClass;
+                    let replyMessage = 'Kelas berikutnya akan dimulai dalam ';
+                    if (days > 0) {
+                        replyMessage += `${days} hari `;
+                    }
+                    if (hours > 0) {
+                        replyMessage += `${hours} jam `;
+                    }
+                    replyMessage += `${minutes} menit.`;
+                    return await msg.reply(replyMessage);
+                }
 
             case '!jadwalhari':
                 return await msg.reply(`📅 Jadwal Hari ${getToday()}:\n${getTodaySchedule()}`);
@@ -63,36 +81,51 @@ async function handleCommand(msg, command) {
             case '!sticker':
                 if (msg.hasMedia) {
                     return await createSticker(msg);
-                } else if (msg.body.split(' ').length > 1) {
-                    const text = msg.body.split(' ').slice(1).join(' ');
+                } else if (args.length > 0) {
+                    const text = args.join(' ');
                     return await createStickerFromText(msg, text);
                 } else {
                     return await msg.reply('❌ Silakan kirim gambar dengan caption !stiker atau teks dengan format !stiker <teks>');
                 }
                 break;
 
-            // case '!reminder on':
-            //     reminderSystem.addSubscriber(msg.from);
-            //     await msg.reply('✅ Anda telah berlangganan pengingat jadwal!');
-            //     break;
-            //
-            // case '!reminder off':
-            //     reminderSystem.removeSubscriber(msg.from);
-            //     await msg.reply('❌ Anda telah berhenti berlangganan pengingat jadwal!');
-            //     break;
-            //
-            // case '!setreminder':
-            //     const minutes = msg.body.split(' ')[1];
-            //     if (!minutes || isNaN(minutes)) {
-            //         await msg.reply('❌ Format salah! Gunakan: !setreminder <menit>');
-            //         break;
-            //     }
-            //     reminderSystem.setReminderTime(parseInt(minutes));
-            //     await msg.reply(`✅ Waktu pengingat diatur ke ${minutes} menit sebelum jadwal`);
-            //     break;
-            //
-            // case '!addingtask':
-            //     console.log('Received !addtask command');
+            case '!reminder':
+                if (args[0] === 'on') {
+                    if (reminderSystem.isSubscriber(msg.from)) {
+                        await msg.reply('⚠️ Anda sudah berlangganan pengingat jadwal!');
+                    } else {
+                        reminderSystem.addSubscriber(msg.from);
+                        await msg.reply('✅ Anda telah berlangganan pengingat jadwal!');
+                    }
+                } else if (args[0] === 'off') {
+                    if (reminderSystem.isSubscriber(msg.from)) {
+                        reminderSystem.removeSubscriber(msg.from);
+                        await msg.reply('❌ Anda telah berhenti berlangganan pengingat jadwal!');
+                    } else {
+                        await msg.reply('⚠️ Anda belum berlangganan pengingat jadwal!');
+                    }
+                } else {
+                    await msg.reply('❌ Format salah! Gunakan: !reminder on/off');
+                }
+                break;
+
+            case '!setreminder':
+                if (!reminderSystem.isSubscriber(msg.from)) {
+                    await msg.reply('⚠️ Anda belum berlangganan pengingat jadwal! Gunakan: !reminder on untuk berlangganan.');
+                    break;
+                }
+
+                const minutes = args[0];
+                if (!minutes || isNaN(minutes)) {
+                    await msg.reply('❌ Format salah! Gunakan: !setreminder <menit>');
+                    break;
+                }
+                reminderSystem.setReminderTime(parseInt(minutes));
+                await msg.reply(`✅ Waktu pengingat diatur ke ${minutes} menit sebelum jadwal`);
+                break;
+
+            // case '!addtask':
+            //     const taskParts = msg.body.split('\n');
             //     if (taskParts.length < 4) {
             //         await msg.reply(
             //             '❌ Format salah! Gunakan:\n!addtask\n<mata kuliah>\n<deskripsi>\n<deadline (DD/MM/YYYY atau DD/MM/YYYY HH:mm)>'
@@ -101,14 +134,11 @@ async function handleCommand(msg, command) {
             //     }
             //
             //     const [, subject, description, deadline] = taskParts;
-            //     console.log('Task Parts:', { subject, description, deadline });
             //
             //     let deadlineMoment;
             //     if (moment(deadline.trim(), 'DD/MM/YYYY', true).isValid()) {
-            //         // Jika formatnya hanya tanggal, tambahkan jam default
             //         deadlineMoment = moment(deadline.trim() + ' 23:59', 'DD/MM/YYYY HH:mm');
             //     } else {
-            //         // Jika formatnya tanggal dan jam
             //         deadlineMoment = moment(deadline.trim(), 'DD/MM/YYYY HH:mm');
             //     }
             //
@@ -124,7 +154,6 @@ async function handleCommand(msg, command) {
             //             deadlineMoment,
             //             msg.author || msg.from
             //         );
-            //         console.log('Task ID:', taskId);
             //         await msg.reply(`✅ Tugas berhasil ditambahkan dengan ID: ${taskId}`);
             //     } catch (error) {
             //         console.error('Error adding task:', error);
@@ -161,13 +190,12 @@ async function handleCommand(msg, command) {
             //     break;
             //
             // case '!submit':
-            //     const submitParts = msg.body.split(' ');
-            //     if (submitParts.length < 3) {
+            //     const [submitTaskId, submissionLink] = args;
+            //     if (!submitTaskId || !submissionLink) {
             //         await msg.reply('❌ Format salah! Gunakan: !submit <taskId> <link_submission>');
             //         break;
             //     }
             //
-            //     const [, submitTaskId, submissionLink] = submitParts;
             //     const success = taskManager.addSubmission(submitTaskId, msg.from, submissionLink);
             //
             //     if (success) {

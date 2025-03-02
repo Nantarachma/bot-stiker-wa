@@ -1,100 +1,63 @@
-const schedule = require('node-schedule');
 const moment = require('moment');
+const { commandSchedules } = require('./config');
 
 class ReminderSystem {
     constructor() {
-        this.activeReminders = new Map();
-        this.subscribers = new Set();
-        this.reminderTime = 30; // default 30 menit sebelum jadwal
+        this.reminderTime = 30; // default 30 minutes before schedule
     }
 
     // Mengkonversi jadwal ke format waktu yang dapat digunakan
     parseScheduleTime(scheduleString) {
         // Format waktu yang diharapkan: "HH.MM-HH.MM"
-        const timeMatch = scheduleString.match(/(\d{2}.\d{2})-(\d{2}.\d{2})/);
+        const timeMatch = scheduleString.match(/(\d{2}\.\d{2})-(\d{2}\.\d{2})/);
         if (!timeMatch) return null;
 
         const startTime = timeMatch[1].replace('.', ':');
         return moment(startTime, 'HH:mm');
     }
 
-    // Mengatur reminder untuk satu hari
-    setupDailyReminders(day, schedules) {
-        const daySchedule = schedules[day];
-        if (!daySchedule) return;
+    // Mendapatkan waktu kelas berikutnya
+    getNextClassTime() {
+        const now = moment();
+        let nextClassTime = null;
 
-        const scheduleLines = daySchedule.split('\n\n');
-        scheduleLines.forEach(scheduleLine => {
-            const timeMatch = scheduleLine.match(/(\d{2}.\d{2})-(\d{2}.\d{2})/);
-            if (!timeMatch) return;
+        const days = Object.keys(commandSchedules);
+        for (let i = 0; i < days.length; i++) {
+            const dayIndex = (now.day() + i) % 7; // Get the day index considering the current day
+            const day = days[dayIndex];
+            const daySchedule = commandSchedules[day];
+            if (!daySchedule) continue;
 
-            const startTime = this.parseScheduleTime(scheduleLine);
-            if (!startTime) return;
+            const scheduleLines = daySchedule.split('\n');
+            for (const scheduleLine of scheduleLines) {
+                const startTime = this.parseScheduleTime(scheduleLine);
+                if (!startTime) continue;
 
-            const reminderTime = moment(startTime).subtract(this.reminderTime, 'minutes');
-            const cronTime = `${reminderTime.minutes()} ${reminderTime.hours()} * * ${this.getDayNumber(day)}`;
+                const classTime = moment(`${day} ${startTime.format('HH:mm')}`, 'dddd HH:mm');
+                if (classTime.isBefore(now)) {
+                    classTime.add(1, 'week'); // Move to the next week if the class time is before now
+                }
 
-            const job = schedule.scheduleJob(cronTime, () => {
-                this.sendReminder(scheduleLine);
-            });
-
-            this.activeReminders.set(`${day}-${timeMatch[0]}`, job);
-        });
-    }
-
-    // Konversi nama hari ke angka untuk cron
-    getDayNumber(day) {
-        const days = {
-            'Minggu': 0, 'Senin': 1, 'Selasa': 2, 'Rabu': 3,
-            'Kamis': 4, 'Jumat': 5, 'Sabtu': 6
-        };
-        return days[day];
-    }
-
-    // Mengirim reminder ke semua subscriber
-    async sendReminder(scheduleInfo) {
-        const message = `🔔 PENGINGAT JADWAL!\n\n${scheduleInfo}\n\n⏰ Kelas akan dimulai dalam ${this.reminderTime} menit!`;
-
-        for (const subscriber of this.subscribers) {
-            try {
-                await client.sendMessage(subscriber, message);
-            } catch (error) {
-                console.error(`Failed to send reminder to ${subscriber}:`, error);
+                if (!nextClassTime || classTime.isBefore(nextClassTime)) {
+                    nextClassTime = classTime;
+                }
             }
         }
+
+        return nextClassTime;
     }
 
-    // Menambah subscriber
-    addSubscriber(userId) {
-        this.subscribers.add(userId);
-        return this.subscribers.size;
-    }
+    // Mendapatkan waktu hingga kelas berikutnya
+    getTimeUntilNextClass() {
+        const nextClassTime = this.getNextClassTime();
+        if (!nextClassTime) return null;
 
-    // Menghapus subscriber
-    removeSubscriber(userId) {
-        this.subscribers.delete(userId);
-        return this.subscribers.size;
-    }
-
-    // Mengatur waktu reminder (dalam menit)
-    setReminderTime(minutes) {
-        this.reminderTime = minutes;
-        // Perlu mengatur ulang semua reminder
-        this.resetAllReminders();
-    }
-
-    // Mengatur ulang semua reminder
-    resetAllReminders() {
-        // Batalkan semua job yang aktif
-        for (const [, job] of this.activeReminders) {
-            job.cancel();
-        }
-        this.activeReminders.clear();
-
-        // Setup ulang untuk setiap hari
-        Object.keys(schedules).forEach(day => {
-            this.setupDailyReminders(day, schedules);
-        });
+        const now = moment();
+        const duration = moment.duration(nextClassTime.diff(now));
+        const days = Math.floor(duration.asDays());
+        const hours = duration.hours();
+        const minutes = duration.minutes();
+        return { days, hours, minutes };
     }
 }
 
