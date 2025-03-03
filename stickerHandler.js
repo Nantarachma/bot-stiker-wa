@@ -58,10 +58,11 @@ async function createStickerFromText(msg, text, options = {}) {
 		outputDir = './output',
 		backgroundColor = 'white',
 		textColor = '#0D1111',
-		fontSize = 90,
+		initialFontSize = 90, // Changed from fontSize to initialFontSize
 		maxWidth = 400,
 		applyBlur = true,
 		blurAmount = 2,
+		minFontSize = 20, // Added minimum font size
 	} = options;
 
 	// Create canvas
@@ -72,14 +73,33 @@ async function createStickerFromText(msg, text, options = {}) {
 	ctx.fillStyle = backgroundColor;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	// Set text properties
+	// Find appropriate font size
+	let fontSize = initialFontSize;
+	let lines;
+	const canvasHeight = canvas.height;
+	const padding = 40; // Padding from top and bottom
+	const maxHeight = canvasHeight - padding * 2;
+
+	do {
+		ctx.font = `${fontSize}px 'Arial Narrow Condensed', Arial`;
+		lines = getLines(ctx, text, maxWidth);
+		const totalTextHeight = lines.length * fontSize;
+
+		if (totalTextHeight <= maxHeight || fontSize <= minFontSize) {
+			break;
+		}
+
+		fontSize -= 5; // Decrease font size and try again
+	} while (fontSize > minFontSize);
+
+	// Set text properties with adaptive font size
 	ctx.fillStyle = textColor;
 	ctx.font = `${fontSize}px 'Arial Narrow Condensed', Arial`;
 	ctx.textAlign = 'left';
 	ctx.textBaseline = 'top';
 
-	// Add text to canvas
-	const lines = getLines(ctx, text, maxWidth);
+	// Recalculate lines with final font size
+	lines = getLines(ctx, text, maxWidth);
 	const lineHeight = fontSize;
 
 	// Center text vertically
